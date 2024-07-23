@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color:lightblue ;
+        }
+        .customerForm {
+            background-color: orchid;
+            color:  white;
+            font-size: 1.3em;
+            font-weight: 700;
+            border: solid 3px yellow ;
+            padding: 25px 25px;
+        }
+        .customerForm table input {
+            border: solid 2px orchid ;
+            height: 25px;
+            margin-left: 25px;
+        }
+        .buttons_list {
+            width: 100%;
+            height: 50px;
+        }
+        .buttons_list input {
+            font-size: 1em;
+            padding: 5px 15px;
+            margin: 25px auto 25px 25px;
+            float: left;
+            background-color: paleturquoise;
+            color:  red;
+            font-weight: 600;
+        }
+        .buttons_list input:first-child {
+            margin-left: 0px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+
+        //Create function newCustomer() when clicking New button
+        //The New button must clear all the text boxes
+        function newCustomer(){
+            $.post("/new", function (data, status) {
+                document.getElementById("customerID").value = data.custID;
+                document.getElementById("firstName").value = data.firstname;
+                document.getElementById("lastName").value = data.lastname;
+                document.getElementById("address").value = data.address;
+                document.getElementById("city").value = data.city;
+                document.getElementById("province").value = data.province;
+                document.getElementById("postal").value = data.postal;
+            });
+        }
+        //Create function addCustomer() when clicking 
+        function addCustomer() {
+            //Test empty textboxes
+            testEmpty("customerID");
+            testEmpty("firstName");
+            testEmpty("lastName");
+            testEmpty("address");
+            testEmpty("city");
+            testEmpty("province");
+            testEmpty("postal"); 
+
+            //Get data new customer
+            $.post("/add", {
+                //This is the data being posted to the web server
+                custID: document.getElementById("customerID").value, 
+                firstname: document.getElementById("firstName").value,
+                lastname: document.getElementById("lastName").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                province: document.getElementById("province").value,
+                postal: document.getElementById("postal").value  
+            });
+            
+        }
+
+        //Create function updateCustomer() 
+        function updateCustomer() {
+            //Test empty textboxes
+            testEmpty("customerID");
+            testEmpty("firstName");
+            testEmpty("lastName");
+            testEmpty("address");
+            testEmpty("city");
+            testEmpty("province");
+            testEmpty("postal"); 
+
+            // Get data from new customer
+            $.post("/update", {
+                // The data being posted to the web server
+                custID: document.getElementById("customerID").value, 
+                firstname: document.getElementById("firstName").value,
+                lastname: document.getElementById("lastName").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                province: document.getElementById("province").value,
+                postal: document.getElementById("postal").value
+            });
+            
+            
+        }
+
+        //Create function deleteCustomer() 
+        function deleteCustomer() {
+            //Test empty textboxes
+            testEmpty("customerID");
+            testEmpty("firstName");
+            testEmpty("lastName");
+            testEmpty("address");
+            testEmpty("city");
+            testEmpty("province");
+            testEmpty("postal"); 
+            
+            // Confirm when delete information of customer
+            let result = confirm("Are you sure to detele this customer?");
+            if(result){
+                $.post("/delete", {
+                // This is the data being posted to the web server
+                custID: document.getElementById("customerID").value, 
+                firstname: document.getElementById("firstName").value,
+                lastname: document.getElementById("lastName").value,
+                address: document.getElementById("address").value,
+                city: document.getElementById("city").value,
+                province: document.getElementById("province").value,
+                postal: document.getElementById("postal").value
+            },
+            // Callback function returns status and data as object literal
+            function (data, status) {
+                document.getElementById("customerID").value = data.custID;
+                document.getElementById("firstName").value = data.firstname;
+                document.getElementById("lastName").value = data.lastname;
+                document.getElementById("address").value = data.address;
+                document.getElementById("city").value = data.city;
+                document.getElementById("province").value = data.province;
+                document.getElementById("postal").value = data.postal;
+            });
+            }
+            
+        }
+
+        //Create function findCustomer() 
+        function findCustomer() {
+            $.post("/find", {
+                custID: document.getElementById("customerID").value
+            },
+            function (data, status) {
+                document.getElementById("firstName").value = data.firstname;
+                document.getElementById("lastName").value = data.lastname;
+                document.getElementById("address").value = data.address;
+                document.getElementById("city").value = data.city;
+                document.getElementById("province").value = data.province;
+                document.getElementById("postal").value = data.postal;
+            });
+        }
+
+        // Validate text boxes if input empty, change background color of input 
+        function testEmpty(id) {
+				if ($gel(id).value === "") {
+					$gel(id).style.backgroundColor = "red";
+				}
+				else {
+					$gel(id).style.backgroundColor = "white";
+				}
+		}
+        function $gel(id) {
+				return document.getElementById(id);
+		}
+
+    </script>
+</head>
+<body>
+    <form class="customerForm">
+        <table>
+            <tr><td>Customer #:</td><td><input type="text" name="customerID" id="customerID"></td></tr>
+            <tr><td>First Name: </td><td><input type="text" name="firstName" id="firstName" size="30"></td></tr>
+            <tr><td>Last Name: </td><td><input type="text" name="lastName" id="lastName" size="30"></td></tr>
+            <tr><td>Address: </td><td><input type="text" name="address" id="address" size="30"></td></tr>
+            <tr><td>City: </td><td><input type="text" name="city" id="city"></td></tr>
+            <tr><td>Province: </td><td><input type="text" name="province" id="province" size="15"></td></tr>
+            <tr><td>Postal: </td><td><input type="text" name="postal" id="postal" size="10"></td></tr>
+            <tr>
+            </tr>
+        </table>
+        <div class="buttons_list">
+            <input type="button" value="New" name="New" onclick="newCustomer();"  >
+            <input type="button" value="Add" name="Add" onclick="addCustomer();">
+            <input type="button" value="Update" name="Update" onclick="updateCustomer();">
+            <input type="button" value="Delete" name="Delete" onclick="deleteCustomer();" >
+            <input type="button" value="Find" name="Find" onclick="findCustomer();">
+        </div>
+    </form>
+</body>
+</html>
+
